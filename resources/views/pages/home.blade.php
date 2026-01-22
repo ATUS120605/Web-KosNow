@@ -105,39 +105,86 @@
         </div>
     </section>
 
-    <section id="Cities" class="flex flex-col p-5 gap-4 bg-[#F5F6F8] mt-[30px]">
-        <div class="flex items-center justify-between">
-            <h2 class="font-bold">Browse Cities</h2>
-            <a href="{{ route('find-kos.result') }}">
-    <div class="flex items-center gap-2 hover:opacity-70 transition-all">
-        <span class="text-sm font-medium">See all</span>
-        <img src="assets/images/icons/arrow-right.svg" class="w-6 h-6 flex shrink-0" alt="icon">
+ <section id="Cities" style="padding: 24px 20px; background-color: #FFFFFF; margin-top: 20px; border-radius: 32px 32px 0 0;">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h2 style="font-weight: 700; font-size: 16px; color: #141414; margin: 0;">Browse Cities</h2>
+        
+        <a href="{{ route('find-kos.result') }}" style="text-decoration: none; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 14px; font-weight: 600; color: #7F8187;">See all</span>
+            <img src="{{ asset('assets/images/icons/arrow-right.svg') }}" 
+                 style="width: 24px; height: 24px; flex-shrink: 0;" 
+                 alt="icon">
+        </a>
     </div>
-</a>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            @forelse($cities as $city)
-                <a href="{{ route('city.show', ['slug' => $city->slug]) }}" class="card">
-                    <div
-                        class="custom-hover-blue flex items-center rounded-[22px] p-[10px] gap-3 bg-white border border-white overflow-hidden transition-all duration-300">
-                        <div
-                            class="w-[55px] h-[55px] flex shrink-0 rounded-full border-4 border-white ring-1 ring-[#F1F2F6] overflow-hidden">
-                            <img src="{{ asset('storage/' . $city->image) }}" class="w-full h-full object-cover"
-                                alt="icon">
+
+    <div id="cityList" style="display: flex; flex-direction: column; gap: 12px;">
+        @foreach($cities as $index => $city)
+            <a href="{{ route('city.show', ['slug' => $city->slug]) }}" 
+               class="city-item"
+               style="text-decoration: none; color: inherit; {{ $index >= 3 ? 'display: none;' : '' }}">
+                
+                <div class="city-card" style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: #FFFFFF; border-radius: 20px; border: 2px solid transparent; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 52px; height: 52px; flex-shrink: 0; border-radius: 16px; overflow: hidden;">
+                            <img src="{{ asset('storage/' . $city->image) }}" 
+                                 style="width: 100%; height: 100%; object-fit: cover;" 
+                                 alt="{{ $city->name }}">
                         </div>
-                        <div class="flex flex-col gap-[2px]">
-                            <h3 class="font-semibold">{{ $city->name }}</h3>
-                            <p class="text-sm text-ngekos-grey">{{ $city->boardinghouses->count() ?? 0 }} Kos</p>
+                        <div style="display: flex; flex-direction: column;">
+                            <h3 style="font-weight: 700; font-size: 15px; color: #141414; margin: 0;">{{ $city->name }}</h3>
+                            <p style="font-size: 12px; color: #878C94; margin: 2px 0 0 0;">{{ $city->boardinghouses->count() }} Kos tersedia</p>
                         </div>
                     </div>
-                </a>
-            @empty
-                <div class="col-span-2">
-                    <p class="text-ngekos-grey text-center">No cities available</p>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
                 </div>
-            @endforelse
-        </div>
-    </section>
+            </a>
+        @endforeach
+    </div>
+
+    @if($cities->count() > 3)
+    <div style="display: flex; justify-content: center; margin-top: 16px;">
+        <button id="toggleBtn" onclick="toggleCities()" 
+                style="width: 100%; padding: 12px; border: none; background: #FFFFFF; border-radius: 16px; color: #007BFF; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+            <svg id="btnIcon" style="transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: #007BFF;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 6 6-6"></path>
+            </svg>
+        </button>
+    </div>
+    @endif
+
+    <style>
+        .city-card:hover {
+            border-color: #007BFF !important;
+            transform: translateY(-2px);
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+
+    <script>
+        function toggleCities() {
+            const items = document.querySelectorAll('.city-item');
+            const btnIcon = document.getElementById('btnIcon');
+            let isExpanded = btnIcon.classList.contains('rotate-180');
+
+            items.forEach((item, index) => {
+                if (index >= 3) {
+                    item.style.display = isExpanded ? 'none' : 'block';
+                }
+            });
+
+            if (isExpanded) {
+                btnIcon.classList.remove('rotate-180');
+            } else {
+                btnIcon.classList.add('rotate-180');
+            }
+        }
+    </script>
+</section>
 
     <section id="Best" class="flex flex-col gap-4 px-5 mt-[30px]">
         <div class="flex items-center justify-between">
